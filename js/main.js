@@ -16,12 +16,14 @@ const NIVELES = [
     icono: 'banana',
     titulo: 'La carrera de las bananas',
     inspirado: 'Banana Kong',
-    instrucciones: () => [
-      `Junta ${CONFIG.edad} bananas, una por cada año`,
+    instrucciones: [
+      'Gira tu celular: se juega en horizontal',
+      '¡Una avalancha de bananas te persigue! Corre hasta la meta',
       'Toca la pantalla para saltar (dos toques = doble salto)',
-      'Esquiva las rocas',
-      'En el camino se desbloquean recuerdos',
+      'Si chocas con una roca, la avalancha te atrapa',
+      'Las bananas doradas guardan recuerdos: atrápalas si puedes',
     ],
+    detalle: () => `Recuerdos ${estado.recuerdos.length}/${CONFIG.recuerdos.length}`,
   },
   {
     modulo: () => NivelBaile,
@@ -29,9 +31,10 @@ const NIVELES = [
     titulo: 'Baila conmigo',
     inspirado: 'Just Dance',
     instrucciones: [
-      'Sube el volumen',
+      'Sube el volumen: suena La Medalla, de Camilo y Evaluna',
       'Toca cada círculo justo cuando llegue a su aro',
-      'Sigue el ritmo y encadena combos',
+      'Si el círculo tiene cola, mantén pulsado hasta que termine',
+      'Sigue los acentos de la voz: los aros brillan cuando toca',
     ],
   },
   {
@@ -50,7 +53,7 @@ const NIVELES = [
 ];
 
 const CLAVE = 'cumple-progreso';
-let estado = { nivel: 0, decoraciones: [] };
+let estado = { nivel: 0, decoraciones: [], recuerdos: [] };
 let nivelActivo = null;
 let nivelElegido = 0;
 
@@ -65,6 +68,12 @@ function guardar() {
   try {
     localStorage.setItem(CLAVE, JSON.stringify(estado));
   } catch {}
+}
+
+// Los recuerdos encontrados se guardan al momento, aunque ella salga del nivel
+function marcarRecuerdo(i) {
+  if (!estado.recuerdos.includes(i)) estado.recuerdos.push(i);
+  guardar();
 }
 
 const dos = n => String(n).padStart(2, '0');
@@ -119,7 +128,7 @@ function mapa() {
     tarjeta(
       Sprites.img(hecho || actual ? n.icono : 'candado', 3),
       `Nivel ${i + 1}: ${n.titulo}`,
-      hecho ? '¡Completado!' : actual ? `Inspirado en ${n.inspirado}` : 'Bloqueado',
+      hecho ? ['¡Completado!', n.detalle?.()].filter(Boolean).join(' · ') : actual ? `Inspirado en ${n.inspirado}` : 'Bloqueado',
       hecho ? 'hecho' : actual ? 'actual' : 'bloqueado',
       () => instrucciones(i),
     );
@@ -159,6 +168,13 @@ function salirNivel() {
   $('#nivel-contenedor').innerHTML = '';
 }
 
+function abrirSandbox() {
+  salirNivel();
+  mostrarPantalla('pantalla-nivel');
+  nivelActivo = SandboxRitmo;
+  SandboxRitmo.iniciar($('#nivel-contenedor'));
+}
+
 function completado(i, resultado = {}) {
   salirNivel();
   if (i === estado.nivel) estado.nivel++;
@@ -178,7 +194,7 @@ function completado(i, resultado = {}) {
 function final() {
   Final.mostrar(estado.decoraciones, () => {
     Final.detener();
-    estado = { nivel: 0, decoraciones: [] };
+    estado = { nivel: 0, decoraciones: [], recuerdos: [] };
     guardar();
     inicio();
   });
@@ -195,11 +211,22 @@ function arrancar() {
   $('#boton-jugar').addEventListener('click', jugar);
   $('#boton-volver').addEventListener('click', mapa);
   $('#boton-salir').addEventListener('click', () => {
+    const eraSandbox = nivelActivo === SandboxRitmo;
     salirNivel();
-    mapa();
+    if (eraSandbox) inicio();
+    else mapa();
   });
 
   const ensayo = new URLSearchParams(location.search).has('ensayo');
+  const sandbox = new URLSearchParams(location.search).has('sandbox');
+  if (ensayo || sandbox) {
+    const botonSandbox = document.createElement('button');
+    botonSandbox.className = 'boton secundario';
+    botonSandbox.textContent = 'Sandbox de ritmo';
+    botonSandbox.addEventListener('click', abrirSandbox);
+    $('#pantalla-inicio').append(botonSandbox);
+    if (sandbox) { abrirSandbox(); return; }
+  }
   const fecha = new Date(CONFIG.fechaCumple).getTime();
   if (!ensayo && Date.now() < fecha) esperar(fecha);
   else inicio();

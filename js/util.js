@@ -111,10 +111,12 @@ function crearPixelLienzo(canvas, opciones) {
     buffer.height = l.h;
     l.b.imageSmoothingEnabled = false;
   };
-  l.presentar = () => {
+  // dx/dy: desplazamiento en pixeles de arte (para sacudir la pantalla)
+  l.presentar = (dx = 0, dy = 0) => {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(buffer, 0, 0, l.w * l.k * l.dpr, l.h * l.k * l.dpr);
+    const p = l.k * l.dpr;
+    ctx.drawImage(buffer, dx * p, dy * p, l.w * p, l.h * p);
     ctx.setTransform(l.dpr, 0, 0, l.dpr, 0, 0);
   };
   l.ajustar();
@@ -189,6 +191,11 @@ const Confeti = (() => {
   function cuadro(t) {
     const dt = Math.min(0.033, (t - ultimo) / 1000);
     ultimo = t;
+    // si giran el celular mientras cae el confeti, el lienzo se ajusta a la nueva pantalla
+    if (canvas.width !== Math.round(innerWidth * dpr) || canvas.height !== Math.round(innerHeight * dpr)) {
+      canvas.width = Math.round(innerWidth * dpr);
+      canvas.height = Math.round(innerHeight * dpr);
+    }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, innerWidth, innerHeight);
     for (const p of piezas) {

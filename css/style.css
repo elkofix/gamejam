@@ -449,7 +449,7 @@ h2 { font-size: 1.8rem; }
 
 /* ---------- Nivel 2: bananas ---------- */
 
-.runner { position: relative; height: 100%; }
+.runner { position: relative; height: 100%; touch-action: manipulation; }
 .pista-toque {
   position: absolute;
   left: 50%;
@@ -467,12 +467,106 @@ h2 { font-size: 1.8rem; }
   animation: parpadeo 1s steps(1) infinite;
 }
 .pista-toque small { font-size: 1rem; color: var(--suave); }
+
+.runner .hud .hud-camino { gap: 8px; }
+.camino { position: relative; width: 120px; height: 12px; background: #f3e3ec; box-shadow: 0 0 0 2px var(--k); }
+.camino i { position: absolute; inset: 0 auto 0 0; width: 0; background: repeating-linear-gradient(90deg, var(--amarillo) 0 6px, #e8901a 6px 8px); }
+
+.derrota h2 { text-shadow: 3px 3px 0 var(--amarillo); }
+
+/* el nivel de las bananas usa todo el ancho de la pantalla */
+body.horizontal #app { max-width: none; }
+
+.modal-lado { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+.modal.recuerdo {
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  touch-action: pan-y pinch-zoom;
+}
+.modal.recuerdo .tarjeta {
+  max-width: 420px;
+  max-height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  padding: 16px;
+  gap: 16px;
+}
+.modal.recuerdo .tarjeta > * { flex-shrink: 0; min-width: 0; }
+.modal.recuerdo .foto { width: calc(100% - 16px); max-width: 280px; }
+.modal.recuerdo .foto img:not(.px) { object-fit: contain; }
+.modal.recuerdo .modal-lado { width: 100%; gap: 12px; }
+.modal.recuerdo .modal-texto {
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+.modal.recuerdo .boton { width: calc(100% - 8px); min-height: 48px; font-size: 1.1rem; }
+
+@media (orientation: landscape) and (max-height: 540px) {
+  .modal.recuerdo .tarjeta { flex-direction: row; align-items: flex-start; max-width: 680px; gap: 16px; }
+  .modal.recuerdo .modal-foto { flex: 1; }
+  .modal.recuerdo .foto { width: calc(100% - 16px); max-height: 54vh; max-height: 54dvh; }
+  .modal.recuerdo .modal-lado { flex: 1.2; margin-block: auto; }
+  .modal.derrota .tarjeta { max-width: 460px; }
+}
+
+.girar {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #fff;
+  text-align: center;
+  background: repeating-conic-gradient(#3a1a4e 0 25%, #341646 0 50%) 0 0 / 32px 32px;
+}
+.girar p { font-size: 1.8rem; font-weight: 700; text-shadow: 3px 3px 0 var(--rosa-oscuro); }
+.girar small { color: var(--rosa-claro); }
+.girar-celular { animation: girar 2s steps(1) infinite; }
+@keyframes girar {
+  0% { transform: rotate(0); }
+  35% { transform: rotate(-45deg); }
+  50%, 90% { transform: rotate(-90deg); }
+}
 @keyframes parpadeo { 50% { opacity: 0.6; } }
 .modal-texto { font-size: 1.15rem; line-height: 1.4; }
 
 /* ---------- Nivel 3: baile ---------- */
 
 .baile { position: relative; height: 100%; color: #fff; }
+.baile-cancion {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  left: 90px;
+  right: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+  pointer-events: none;
+  text-shadow: 2px 2px 0 var(--k);
+}
+.baile-cancion strong { font-size: 1rem; }
+.baile-cancion small { font-size: 0.8rem; color: var(--rosa-claro); }
+.baile-carga {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(29, 11, 58, 0.9);
+}
 .baile-hud {
   position: absolute;
   top: 14px;
@@ -502,6 +596,55 @@ h2 { font-size: 1.8rem; }
   font-size: 3.4rem;
   color: var(--amarillo);
   text-shadow: 4px 4px 0 var(--rosa-oscuro), -3px -3px 0 var(--k), 3px -3px 0 var(--k), -3px 3px 0 var(--k);
+}
+
+/* ---------- Sandbox de ritmo ---------- */
+.sandbox { display: flex; flex-direction: column; height: 100%; min-height: 0; background: #1d0b3a; color: #fff; }
+.sandbox-panel {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 46%;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  padding: max(12px, env(safe-area-inset-top)) 12px 10px;
+  background: #2b1055;
+  border-bottom: 3px solid var(--rosa);
+}
+.sandbox-panel h2 { font-size: 1.3rem; padding-right: 52px; margin-bottom: 8px; }
+.sandbox-ayuda, .sandbox-estado { font-size: 0.9rem; line-height: 1.35; margin-block: 8px; }
+.sandbox-estado { color: var(--rosa-claro); }
+.sandbox-fila { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-block: 8px; }
+.sandbox-panel button, .sandbox-panel select, .sandbox-nota input {
+  font: inherit;
+  font-size: 0.9rem;
+  min-height: 44px;
+  padding: 8px;
+  border: 2px solid var(--rosa-claro);
+  border-radius: 0;
+  color: var(--k);
+  background: #fff6e0;
+  touch-action: manipulation;
+}
+.sandbox-panel button { cursor: pointer; }
+.sandbox-panel button:disabled { opacity: 0.5; cursor: default; }
+.sandbox-panel .sandbox-play, .sandbox-panel [data-accion="guardar"] { background: var(--rosa); font-weight: 700; }
+.sandbox-posicion { flex: 1; min-width: 60px; min-height: 44px; accent-color: var(--rosa); touch-action: pan-x; }
+.sandbox-reloj { font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+.sandbox-acciones { gap: 6px; }
+.sandbox-editor summary { padding-block: 10px; min-height: 44px; cursor: pointer; }
+.sandbox-nota { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) 44px; gap: 6px; align-items: end; padding-block: 8px; border-top: 1px solid #6b40ad; }
+.sandbox-nota label { min-width: 0; font-size: 0.75rem; }
+.sandbox-nota input, .sandbox-nota select { display: block; width: 100%; min-width: 0; margin-top: 4px; user-select: text; -webkit-user-select: text; }
+.sandbox-juego { flex: 1; min-height: 0; position: relative; }
+.sandbox-juego .baile-cancion { top: 8px; right: 16px; }
+.sandbox-juego .baile-hud { top: 8px; }
+.sandbox-juego .baile-puntos { font-size: 1.4rem; }
+
+@media (orientation: landscape) and (max-height: 540px) {
+  .sandbox { flex-direction: row; }
+  .sandbox-panel { flex: 0 0 45%; max-height: 100%; padding-right: 12px; border-bottom: 0; border-right: 3px solid var(--rosa); }
+  .sandbox-panel h2 { padding-right: 0; }
+  .sandbox-juego .baile-cancion { right: 60px; }
 }
 
 /* ---------- Nivel 4: pingüinos ---------- */
