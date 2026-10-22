@@ -2,8 +2,11 @@
 const Final = (() => {
   let stream = null;
   let sesion = 0;
+  let limpiarRegalos = () => {};
 
   function mostrar(decoraciones, alReiniciar) {
+    limpiarRegalos();
+    limpiarRegalos = () => {};
     const id = ++sesion;
     const el = $('#pantalla-final');
     el.innerHTML = `
@@ -21,8 +24,10 @@ const Final = (() => {
         <h1></h1>
         <div class="final-foto"></div>
         <p class="carta panel"></p>
+        <small class="suave carta-ayuda">Toca la carta para leerla completa.</small>
         <p class="firma"></p>
         <div class="pista panel oculto"></div>
+        <section class="final-regalos oculto" aria-label="Las siluetas de tus regalos"></section>
         <button class="boton secundario reiniciar">Jugar otra vez</button>
       </div>`;
     mostrarPantalla('pantalla-final');
@@ -105,13 +110,19 @@ const Final = (() => {
       $('.reiniciar', carta).addEventListener('click', alReiniciar);
       setTimeout(() => {
         carta.classList.remove('oculto');
-        escribir($('.carta', carta), CONFIG.carta, id);
+        escribir($('.carta', carta), CONFIG.carta, id, () => {
+          if (!CONFIG.regalos?.siluetas?.length) return;
+          const regalos = $('.final-regalos', carta);
+          limpiarRegalos = Regalos.montar(regalos);
+          regalos.classList.remove('oculto');
+          $('.carta-ayuda', carta).classList.add('oculto');
+        });
       }, 900);
     }
   }
 
   // Efecto máquina de escribir; tocar el texto lo completa
-  function escribir(nodo, texto, id) {
+  function escribir(nodo, texto, id, alTerminar) {
     let i = 0;
     nodo.addEventListener('click', () => (i = texto.length));
     const paso = () => {
@@ -119,6 +130,7 @@ const Final = (() => {
       i = Math.min(texto.length, i + 1);
       nodo.textContent = texto.slice(0, i);
       if (i < texto.length) setTimeout(paso, texto[i - 1] === '\n' ? 250 : 35);
+      else alTerminar?.();
     };
     paso();
   }
@@ -131,6 +143,8 @@ const Final = (() => {
   function detener() {
     sesion++;
     soltarMicrofono();
+    limpiarRegalos();
+    limpiarRegalos = () => {};
   }
 
   return { mostrar, detener };

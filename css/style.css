@@ -579,6 +579,10 @@ body.horizontal #app { max-width: none; }
   text-shadow: 3px 3px 0 var(--k);
 }
 .baile-puntos { font-size: 2rem; font-weight: 700; }
+.baile-meta { font-size: 0.8rem; color: var(--rosa-claro); }
+.baile-derrota { color: var(--k); }
+.baile-derrota .tarjeta { max-width: 400px; max-height: 100%; overflow-y: auto; }
+.baile-derrota p { line-height: 1.45; }
 .baile-combo { color: var(--amarillo); font-weight: 700; }
 .baile-final {
   position: absolute;
@@ -593,7 +597,7 @@ body.horizontal #app { max-width: none; }
   animation: sello 0.4s steps(4);
 }
 .baile-final strong {
-  font-size: 3.4rem;
+  font-size: clamp(1.8rem, 7vw, 3rem);
   color: var(--amarillo);
   text-shadow: 4px 4px 0 var(--rosa-oscuro), -3px -3px 0 var(--k), 3px -3px 0 var(--k), -3px 3px 0 var(--k);
 }
@@ -705,3 +709,80 @@ body.horizontal #app { max-width: none; }
 .firma { font-weight: 700; color: var(--rosa-oscuro); align-self: flex-end; }
 .pista { width: calc(100% - 8px); padding: 14px; line-height: 1.45; background: #fff8d6; }
 .pista strong { display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+/* ---------- Siluetas y adivinanzas ---------- */
+.final-regalos { width: 100%; display: flex; flex-direction: column; gap: 16px; padding: 20px 4px 4px; border-top: 3px dashed var(--rosa-oscuro); }
+.regalos-intro { font-size: 1.15rem; line-height: 1.5; }
+.regalos-lista { display: flex; flex-direction: column; gap: 28px; width: 100%; }
+.regalo-tarjeta { display: flex; flex-direction: column; gap: 16px; padding: 18px 14px; min-width: 0; }
+.regalo-tarjeta h3 { font-size: 1.3rem; color: var(--morado-oscuro); }
+.regalo-silueta { width: 100%; aspect-ratio: 1; background: #fff; overflow: hidden; }
+.regalo-silueta img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.regalo-formulario { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+.regalo-formulario label { font-weight: 700; }
+.regalo-formulario textarea {
+  display: block;
+  width: 100%;
+  min-height: 100px;
+  max-height: 260px;
+  padding: 12px;
+  resize: vertical;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  border: 2px solid var(--morado-oscuro);
+  border-radius: 0;
+  background: var(--crema);
+  color: var(--k);
+  user-select: text;
+  -webkit-user-select: text;
+  touch-action: auto;
+}
+.regalo-formulario .boton { min-height: 48px; padding-inline: 12px; font-size: 1.1rem; }
+.regalo-estado { min-height: 1.4em; font-size: 1rem; line-height: 1.4; color: var(--morado-oscuro); overflow-wrap: anywhere; }
+.regalo-estado.regalo-error { color: #a8243f; }
+.regalo-historial { text-align: left; border-top: 2px dashed var(--rosa-claro); padding-top: 6px; }
+.regalo-historial summary { cursor: pointer; min-height: 44px; padding-block: 10px; font-weight: 700; }
+.regalo-historial-estado { color: var(--suave); font-size: 0.95rem; line-height: 1.4; }
+.regalo-ideas { padding-left: 22px; max-height: 320px; overflow-y: auto; overscroll-behavior-y: contain; }
+.regalo-ideas li { padding: 10px 4px; line-height: 1.45; border-bottom: 1px solid var(--rosa-claro); }
+.regalo-ideas p { white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
+.regalo-ideas small { color: var(--suave); }
+.regalo-historial .enlace { min-height: 44px; margin-right: 12px; }
+.regalo-pregunta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: calc(100% - 8px);
+  min-height: 180px;
+  padding: 24px;
+  font: inherit;
+  color: var(--morado-oscuro);
+  background: var(--crema);
+  border: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.regalo-pregunta span { font-size: 4rem; font-weight: 700; text-shadow: 4px 4px 0 var(--rosa-claro); }
+.regalo-pregunta small { font-size: 1.1rem; }
+.regalo-reto { display: flex; flex-direction: column; gap: 14px; min-width: 0; padding: 20px 14px; text-align: left; }
+.regalo-reto h3 { color: var(--morado-oscuro); }
+.regalo-reto label { font-size: 1.15rem; font-weight: 700; line-height: 1.4; }
+.regalo-reto input {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px;
+  font: inherit;
+  font-size: 1rem;
+  border: 2px solid var(--morado-oscuro);
+  border-radius: 0;
+  background: var(--crema);
+  color: var(--k);
+  user-select: text;
+  -webkit-user-select: text;
+}
+.regalo-reto input[aria-invalid="true"] { border-color: #a8243f; }
+.regalo-reto .boton { min-height: 48px; font-size: 1.1rem; }

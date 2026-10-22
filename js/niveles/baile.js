@@ -18,6 +18,16 @@ const NivelBaile = (() => {
   let raf = 0;
   let limpiar = [];
 
+  function calcularMeta(notas) {
+    const maximo = notas.reduce((total, n) => total + 300 + (n.duracion ? 150 : 0), 0) + notas.length * (notas.length + 1) * 2.5;
+    // Un mapa corto creado en el sandbox también debe permitir superar el nivel.
+    return Math.min(CONFIG.cancion.puntosMinimos ?? 15000, Math.ceil(maximo * 0.6));
+  }
+
+  function puntosMinimos() {
+    return calcularMeta(Ritmo.leer(CONFIG.cancion) ?? Ritmo.original(CONFIG.cancion));
+  }
+
   function generarNotas(beat, duracion, desfase, marcasVoz) {
     if (Array.isArray(marcasVoz) && marcasVoz.length) {
       const pasosVoz = [0, 1, 2, 3, 2, 1];
@@ -46,10 +56,11 @@ const NivelBaile = (() => {
     let notas = (mapa.length || Array.isArray(opciones.notas) || marcasVoz?.length ? mapa : generarNotas(beat, duracion, desfase))
       .map(n => ({ ...n, duracion: n.duracion || 0, estado: 0 }));
     let grabando = !!opciones.grabando;
+    let meta = calcularMeta(notas);
 
     el.innerHTML = `
       <div class="baile">
-        <div class="baile-hud"><span class="baile-puntos">0</span><span class="baile-combo"></span></div>
+        <div class="baile-hud"><span class="baile-puntos">0</span><small class="baile-meta ${opciones.sandbox ? 'oculto' : ''}"></small><span class="baile-combo"></span></div>
         <div class="baile-cancion"><strong></strong><small></small></div>
         <canvas class="lienzo" aria-label="Toca los cuatro carriles o usa D, F, J y K. Mantén pulsadas las notas con cola hasta que termine la barra."></canvas>
         <div class="baile-carga" role="status"><p>Preparando nuestra canción…</p><button class="boton oculto">Tocar para escuchar</button></div>
@@ -58,6 +69,9 @@ const NivelBaile = (() => {
     const L = crearPixelLienzo(canvas, { escala: PX });
     const hudPuntos = $('.baile-puntos', el);
     const hudCombo = $('.baile-combo', el);
+    const hudMeta = $('.baile-meta', el);
+    const mostrarMeta = () => { hudMeta.textContent = `Meta: ${meta.toLocaleString('es-CO')}`; };
+    mostrarMeta();
     $('.baile-cancion strong', el).textContent = CONFIG.cancion?.titulo || 'Nuestra canción';
     $('.baile-cancion small', el).textContent = CONFIG.cancion?.artista || '';
     const carga = $('.baile-carga', el);
@@ -86,6 +100,8 @@ const NivelBaile = (() => {
       modo = 'ritmo';
       // El respaldo instrumental necesita su propio patrón regular.
       notas = generarNotas(beat, duracion, desfase);
+      meta = calcularMeta(notas);
+      mostrarMeta();
       ritmo = Sonido.ritmo(bpm);
       t0 = ritmo.inicio;
       listo = true;
@@ -256,9 +272,26 @@ const NivelBaile = (() => {
         }, 100);
         limpiar.push(() => clearInterval(bajar));
       }
+      if (puntos < meta) {
+        const derrota = document.createElement('div');
+        derrota.className = 'modal derrota baile-derrota';
+        derrota.setAttribute('role', 'dialog');
+        derrota.setAttribute('aria-modal', 'true');
+        derrota.setAttribute('aria-labelledby', 'baile-derrota-titulo');
+        derrota.innerHTML = `<div class="tarjeta"><h2 id="baile-derrota-titulo">¡Vamos otra vez!</h2><p>Hiciste ${puntos.toLocaleString('es-CO')} puntos.<br>Necesitas ${meta.toLocaleString('es-CO')} para superar el nivel.</p><p class="suave">Sigue los círculos y mantén las notas con cola.</p><button class="boton">Intentar otra vez</button></div>`;
+        $('.baile', el).append(derrota);
+        const reintentar = $('.boton', derrota);
+        reintentar.addEventListener('click', () => {
+          detener();
+          iniciar(el, terminar, opciones);
+        });
+        reintentar.focus({ preventScroll: true });
+        Sonido.mal();
+        return;
+      }
       const final = document.createElement('div');
       final.className = 'baile-final';
-      final.innerHTML = `<div>${Sprites.img('estrella', 5).repeat(5)}</div><strong>PERFECT</strong>`;
+      final.innerHTML = `<div>${Sprites.img('estrella', 5).repeat(5)}</div><strong>¡LO LOGRASTE!</strong><p>${puntos.toLocaleString('es-CO')} puntos · Meta: ${meta.toLocaleString('es-CO')}</p>`;
       $('.baile', el).append(final);
       Sonido.victoria();
       Confeti.lanzar(100);
@@ -400,6 +433,8 @@ const NivelBaile = (() => {
       },
       establecerNotas(mapa) {
         notas = Ritmo.validar(mapa, CONFIG.cancion).map(n => ({ ...n, estado: n.t < ahora() - 0.24 ? 2 : 0 }));
+        meta = calcularMeta(notas);
+        mostrarMeta();
         puntos = combo = aciertos = 0;
         hudPuntos.textContent = '0';
         hudCombo.textContent = '';
@@ -416,5 +451,5 @@ const NivelBaile = (() => {
     limpiar = [];
   }
 
-  return { iniciar, detener };
+  return { iniciar, detener, puntosMinimos };
 })();

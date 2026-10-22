@@ -30,11 +30,12 @@ const NIVELES = [
     icono: 'bailarina',
     titulo: 'Baila conmigo',
     inspirado: 'Just Dance',
-    instrucciones: [
+    instrucciones: () => [
       'Sube el volumen: suena La Medalla, de Camilo y Evaluna',
       'Toca cada círculo justo cuando llegue a su aro',
       'Si el círculo tiene cola, mantén pulsado hasta que termine',
       'Sigue los acentos de la voz: los aros brillan cuando toca',
+      `Consigue al menos ${NivelBaile.puntosMinimos().toLocaleString('es-CO')} puntos para superar el nivel`,
     ],
   },
   {

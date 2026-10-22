@@ -42,6 +42,7 @@ const CONFIG = {
     bpm: 59.34,
     desfase: 0.91,
     duracion: 66,
+    puntosMinimos: 15000,
     // Mapa importado de ritmo-la-medalla.json. Conserva tiempos, carriles y sostenidos.
     revisionRitmo: 'medalla-5f0964d8b083',
     notas: [
@@ -165,6 +166,18 @@ Para tus 22 deseo que encuentres cosas que te emocionen, que tengas tiempo para 
 Te amo, Isabella. Me hace feliz poder celebrar tu vida contigo.`,
 
   firma: 'Con amor, Alejo',
+
+  // Cambia solo esta URL cuando la API tenga su dirección pública definitiva.
+  regalos: {
+    api: 'https://pocketful-of-words.lovable.app/api/public/texts',
+    pregunta: '¿Cuál es mi juego favorito de Nintendo?',
+    respuesta: 'The Legend of Zelda: Breath of the Wild',
+    siluetas: [
+      { id: 1, imagen: 'assets/regalos/silueta1.png' },
+      { id: 2, imagen: 'assets/regalos/silueta2.png' },
+      { id: 3, imagen: 'assets/regalos/silueta3.png', oculta: true },
+    ],
+  },
 
   // Pista para encontrar el regalo físico (déjalo vacío '' si no hay)
   pistaRegalo: '',
