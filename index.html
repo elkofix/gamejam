@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Tengo algo para ti 🎁</title>
+  <meta name="description" content="Una sorpresa que solo se abre a la medianoche 🌙">
+  <meta property="og:title" content="Tengo algo para ti 🎁">
+  <meta property="og:description" content="Una sorpresa que solo se abre a la medianoche 🌙">
+  <meta name="theme-color" content="#ff7eb6">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <section id="pantalla-espera" class="pantalla">
+      <div class="flotar" data-sprite="regalo 7"></div>
+      <h2>Todavía no...</h2>
+      <p id="espera-frase" class="suave">Esta sorpresa se abre a la medianoche</p>
+      <div id="cuenta" class="cuenta panel">--:--:--</div>
+    </section>
+
+    <section id="pantalla-inicio" class="pantalla">
+      <div class="portada">
+        <span class="flotar" data-sprite="globo 5"></span>
+        <span data-sprite="pastelito 7"></span>
+        <span class="flotar retraso" data-sprite="globo 5 m"></span>
+      </div>
+      <h1>Hola, <span class="nombre"></span> <span data-sprite="corazon 4"></span></h1>
+      <p class="suave">Hoy es un día muy especial, así que preparé algo para ti.<br>Supera 4 retos para descubrir tu sorpresa.</p>
+      <button id="boton-empezar" class="boton">Empezar</button>
+    </section>
+
+    <section id="pantalla-mapa" class="pantalla">
+      <h2>Tus retos</h2>
+      <div id="mapa-niveles" class="mapa"></div>
+    </section>
+
+    <section id="pantalla-instrucciones" class="pantalla">
+      <div id="inst-icono" class="flotar"></div>
+      <small id="inst-inspirado" class="etiqueta"></small>
+      <h2 id="inst-titulo"></h2>
+      <ul id="inst-lista" class="lista panel"></ul>
+      <button id="boton-jugar" class="boton">¡Jugar!</button>
+      <button id="boton-volver" class="enlace">Volver</button>
+    </section>
+
+    <section id="pantalla-nivel" class="pantalla">
+      <button id="boton-salir" class="boton-salir" aria-label="Salir del nivel" data-sprite="cerrar 3"></button>
+      <div id="nivel-contenedor"></div>
+    </section>
+
+    <section id="pantalla-completado" class="pantalla">
+      <div class="rebotar" data-sprite="trofeo 6"></div>
+      <h2>¡Nivel superado!</h2>
+      <p id="comp-mensaje" class="mensaje"></p>
+      <div id="comp-nota" class="nota-amor panel"></div>
+      <button id="boton-continuar" class="boton">Continuar</button>
+    </section>
+
+    <section id="pantalla-final" class="pantalla"></section>
+  </div>
+  <canvas id="confeti"></canvas>
+
+  <script src="js/config.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/niveles/cocina.js"></script>
+  <script src="js/niveles/bananas.js"></script>
+  <script src="js/niveles/baile.js"></script>
+  <script src="js/niveles/pinguinos.js"></script>
+  <script src="js/final.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
